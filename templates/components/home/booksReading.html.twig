@@ -1,0 +1,63 @@
+<div class="card card-grid h-full min-w-full">
+    <div class="card-header">
+        <h3 class="card-title">
+            Mes lectures en cours
+        </h3>
+        <div class="input input-sm max-w-48">
+            <i class="ki-filled ki-magnifier"></i>
+            <input data-datatable-search="#current-books-table" placeholder="Rechercher" type="text"/>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="current-books-table" data-datatable="true" data-datatable-page-size="5">
+            <div class="scrollable-x-auto">
+                <table class="table table-border" data-datatable-table="true">
+                    <thead>
+                        <tr>
+                            <th class="min-w-[280px]">
+                                <span class="sort asc">
+                                    <span class="sort-label">Livre</span>
+                                    <span class="sort-icon"></span>
+                                </span>
+                            </th>
+                            <th class="max-w-[135px] text-end">
+                                <span class="sort">
+                                    <span class="sort-label">Modifié le</span>
+                                    <span class="sort-icon"></span>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for bookRead in booksRead %}  
+                        <tr>
+                            <td>
+                                <div class="flex flex-col gap-2">
+                                    <a class="openbookmodal"
+                                       href="#" data-modal-toggle="#update_modal" data-bookRead-id="{{ bookRead.getId() }}" id = "{{ bookRead.getId() }}"
+                                        >
+                                        {{ books[(bookRead.getBookId())-1].name }} <!-- à partir de l'id du livre lu, on peut retrouver son titre grâce à son emplacement dans le tabelau book envoyé précedemment grâce à notre controlleur-->
+                                    </a>
+                                    <span class="text-2sm text-gray-700 font-normal leading-3">
+                                        {{ bookRead.getId }} <!-- ici on ne cherche que l'id dans notre objet bookRead crée dans notre boucle for-->
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                {{ bookRead.updatedAt|date('d/m/Y à H:i') }} <!-- même logique pour l'id-->
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('click', function(e) {
+    console.log(event.target.id)
+});
+
+</script>

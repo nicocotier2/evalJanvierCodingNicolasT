@@ -1,0 +1,101 @@
+<div class="modal" data-modal="true" id="book_modal">
+    <div class="modal-content max-w-[600px] top-[15%]">
+        <div class="modal-header py-4 px-5">
+            <h3 class="modal-title">Ma lecture</h3>
+        </div>
+        <div class="modal-body p-0 pb-5">
+            <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-max-height="auto"
+                 data-scrollable-offset="300px">
+                <form id="bookForm" method="POST">
+                    <div class="flex flex-col gap-5 p-5">
+                        <div class="flex flex-col gap-1">
+                            <label for="book" class="form-label font-normal text-gray-900">Livre</label>
+                            <select id="book" class="select" name="book_id" required>
+                                {% for book in books %}
+                                    <option value="{{ book.id }}">{{ book.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="form-label font-normal text-gray-900">Mes notes</label>
+                            <div class="flex flex-col w-full gap-1">
+                                <textarea name="description" class="textarea"
+                                          placeholder="Notez-ici les idées importantes de l'oeuvre."
+                                          required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label for="rating" class="form-label font-normal text-gray-900">Note</label>
+                            <select id="rating" class="select" name="rating" required>
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="2.5">2.5</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.5</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.5</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="switch">
+                                <span class="switch-label font-normal text-gray-900">Lecture terminée</span>
+                                <input name="finished" type="checkbox" value="1"/>
+                            </label>
+                        </div>
+
+                        <div class="flex">
+                            <button type="button" id="submitBtn" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('bookForm');
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            // Prépare les données du formulaire
+            const formData = new FormData(form);
+            const url = "{{ path('book_read_create') }}";
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Une erreur est survenue.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || 'Données enregistrées avec succès !');
+                        form.reset(); // Réinitialise le formulaire après succès
+                    } else {
+                        alert(data.message || 'Une erreur est survenue.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur AJAX :', error);
+                    alert('Impossible d\'enregistrer les données.');
+                });
+        });
+    });
+</script>
